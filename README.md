@@ -9,7 +9,7 @@ The separation between the data and business tiers has three benefits:
 * It provides a substitution point for the unit tests.
 * It provides a flexible architecture that can be adapted as the overall design of - the application evolves.
 
-It's just a basic implementation to show you how to centralize your data access needs, you can do more with this library like including search api to have advanced queries, caching etc.
+It's just a basic implementation to show you how to centralize your data access needs, you can extend this library like including search api to have advanced queries, caching etc.
 
 ## Used SharePoint Framework Version 
 
@@ -53,27 +53,59 @@ import * as Repository from "ts-repository-library";
 ```
 - SharePoint repository usage:
 ```
-interface MySampleList{
+interface IMySampleListItem{
     Id:number;
     Title:string;
     Active:boolean;
 }
+// list Id, you can get list id through web part properties and pass it as a parameter
+const listId = "f9c88fb5-3bbc-4f2b-b45c-f31e63e260bd";
+
+// instanciate the repository class
+const mySampleList = new Repository.SharePointRepository<IMySampleListItem>(listId);
 
 // get all items
-const items = await segmentList.getAll();
+const items = await mySampleList.getAll();
+
+// get item by id
+const item = await mySampleList.getOne(1);
 
 // add new item
-await segmentList.add({
+await mySampleList.add({
     Title:"My New Segment",
     Active: true
 });
 // update an existing item
-await segmentList.update({
+await mySampleList.update({
   Id:1,
   Title:"Item has been updated",
   Active: false
 });
 // remove item
-await segmentList.delete(2);
+await mySampleList.delete(2);
 
+- Tenant properties repository
+// you need to pass the web part or extension context
+const tenantRepository = new Repository.TenantRepository(this.props.spfxContext);
+
+// get all properties
+const properties = await tenantRepository.getAll();
+
+// get property by key
+const property = await tenantRepository.getOne("MyApplicationProperty");
+
+// add new property
+await tenantRepository.add({
+    key:"MyApplicationProperty",
+    Value:"OfficePnPDev"
+});
+
+// update property
+await tenantRepository.update({
+    key:"MyApplicationProperty",
+    Value: "New Value",
+    Comment:"My Comments"
+});
+// remove property
+await tenantRepository.delete("MyApplicationProperty");
 ```
