@@ -1,12 +1,11 @@
-
 import { sp, SPRest, Web, StorageEntity } from "@pnp/sp";
-import { ITenantBaseRepository } from "../interfaces/base/ITenantBaseRepository";
+import { ITenantBaseRepository } from "./ITenantBaseRepository";
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { ExtensionContext } from '@microsoft/sp-extension-base';
-import { ITenantProperty } from "../interfaces/common/ITenantProperty";
+import { ITenantProperty } from "../core/ITenantProperty";
 import { SPHttpClientResponse, SPHttpClient } from "@microsoft/sp-http";
 
-export default class TenantBaseRepository implements ITenantBaseRepository{
+export default class TenantBaseRepository<T extends StorageEntity & ITenantProperty> implements ITenantBaseRepository<T>{
     protected _sp: SPRest;
     protected _context: WebPartContext | ExtensionContext;
     private appCatalogUrl:string;
@@ -26,7 +25,7 @@ export default class TenantBaseRepository implements ITenantBaseRepository{
     }
 
     // Update tenant property
-    public async update(newProperty: ITenantProperty) {
+    public async update(newProperty: ITenantProperty): Promise<void>{
         return this.add(newProperty);
     }
 
@@ -37,7 +36,7 @@ export default class TenantBaseRepository implements ITenantBaseRepository{
     }
 
     // Get all properties
-    public async getAll(): Promise<any> {
+    public async getAll(): Promise<T[]> {
         try {
             const catalogUrl =await this.getAppCatalogUrl();
             const apiUrl = `${catalogUrl}/_api/web/AllProperties?$select=storageentitiesindex`;
@@ -45,8 +44,8 @@ export default class TenantBaseRepository implements ITenantBaseRepository{
             if (data.ok) {
                 const results = await data.json();
                 if (results && results.storageentitiesindex) {
-                    const properties: { [key: string]: ITenantProperty } = JSON.parse(results.storageentitiesindex);
-                    return properties;
+                    const properties : ITenantProperty[] = JSON.parse(results.storageentitiesindex);
+                    return properties as T[];
                 }
             }
             return null;
@@ -56,9 +55,16 @@ export default class TenantBaseRepository implements ITenantBaseRepository{
     }
 
     // Get tenant property
-    public async getOne(key:string): Promise<StorageEntity> {
+    public async getOne(key:string): Promise<T> {
         const appCatalogWeb: Web= await this.getAppCatalogWeb();
-        return appCatalogWeb.getStorageEntity(key);
+        try{
+            const property = await appCatalogWeb.getStorageEntity(key);
+            return property as T;
+        }
+        catch(error){
+            return Promise.reject(error.message);
+        }
+         
     }
 
     // Get App Catalog

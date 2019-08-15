@@ -1,3 +1,3 @@
 export { RepositoryLibrary } from './libraries/repository/RepositoryLibrary';
-export {default as TenantRepository} from "./libraries/repository/repositories/tenant/implementations/TenantBaseRepository";
-export {default as ListRepository} from "./libraries/repository/repositories/sharepoint/implementations/ListRepository";
+export {default as TenantRepository} from "./libraries/repository/repositories/tenant/TenantRepository";
+export {default as SharePointRepository} from "./libraries/repository/repositories/sharepoint/SharePointRepository";
