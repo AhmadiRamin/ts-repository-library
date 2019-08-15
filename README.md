@@ -11,6 +11,10 @@ The separation between the data and business tiers has three benefits:
 
 It's just a basic implementation to show you how to centralize your data access needs, you can extend this library like including search api to have advanced queries, caching etc.
 
+This sample consists of two repositories:
+* SharePoint repository to manage CRUD operations on SharePoint lists and libraries
+* Tenant repository to manage CRUD opetrations on tenant properties (logged-in user needs to be global admin)
+
 ## Used SharePoint Framework Version 
 
 ![drop](https://img.shields.io/badge/version-1.9-green.svg)
