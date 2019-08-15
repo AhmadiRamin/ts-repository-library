@@ -41,10 +41,25 @@ export default class TenantBaseRepository<T extends StorageEntity & ITenantPrope
             const catalogUrl =await this.getAppCatalogUrl();
             const apiUrl = `${catalogUrl}/_api/web/AllProperties?$select=storageentitiesindex`;
             const data: SPHttpClientResponse = await this._context.spHttpClient.get(apiUrl, SPHttpClient.configurations.v1);
-            if (data.ok) {
+            if (data.ok) {                
                 const results = await data.json();
-                if (results && results.storageentitiesindex) {
-                    const properties : ITenantProperty[] = JSON.parse(results.storageentitiesindex);
+                
+                if (results && results.storageentitiesindex) {                    
+                    const parsedData:{ [key: string]: ITenantProperty } = JSON.parse(results.storageentitiesindex);
+                    
+                    const keys: string[] = Object.keys(parsedData);
+                    let properties : ITenantProperty[] = [];
+                    keys.map((key: string): any => {
+                        const property: ITenantProperty = parsedData[key];
+                        properties.push(
+                          {
+                            key,
+                            Value: property.Value,
+                            Description: property.Description,
+                            Comment: property.Comment
+                          }
+                        );
+                      });
                     return properties as T[];
                 }
             }
@@ -59,7 +74,7 @@ export default class TenantBaseRepository<T extends StorageEntity & ITenantPrope
         const appCatalogWeb: Web= await this.getAppCatalogWeb();
         try{
             const property = await appCatalogWeb.getStorageEntity(key);
-            return property as T;
+            return {...property,key} as T;
         }
         catch(error){
             return Promise.reject(error.message);

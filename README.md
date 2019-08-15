@@ -15,6 +15,8 @@ This sample consists of two repositories:
 * SharePoint repository to manage CRUD operations on SharePoint lists and libraries
 * Tenant repository to manage CRUD opetrations on tenant properties (logged-in user needs to be global admin)
 
+![repository library in action](./assets/screenshot.gif)
+
 ## Used SharePoint Framework Version 
 
 ![drop](https://img.shields.io/badge/version-1.9-green.svg)

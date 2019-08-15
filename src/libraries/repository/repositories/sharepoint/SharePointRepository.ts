@@ -43,12 +43,14 @@ export default class SharePointRepository<T extends IListItem> implements IShare
     }
 
     // Get one by Id, optional query options
-    public async getOne(id: number, queryOptions: Omit<IQueryOption, "top" | "filter">): Promise<T> {
+    public async getOne(id: number, queryOptions?: Omit<IQueryOption, "top" | "filter">): Promise<T> {
         let result = this._list.items.getById(id);
-        if (queryOptions.expand)
-            result = result.expand(...queryOptions.expand);
-        if (queryOptions.select)
-            result = result.select(...queryOptions.select);
+        if (queryOptions) {
+            if (queryOptions.expand)
+                result = result.expand(...queryOptions.expand);
+            if (queryOptions.select)
+                result = result.select(...queryOptions.select);
+        }
         try {
             const item = await result.get();
             return item;
