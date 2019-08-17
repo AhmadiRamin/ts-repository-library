@@ -13,7 +13,7 @@ It's just a basic implementation to show you how to centralize your data access 
 
 This sample consists of two repositories:
 * SharePoint repository to manage CRUD operations on SharePoint lists and libraries
-* Tenant repository to manage CRUD opetrations on tenant properties (logged-in user needs to be global admin)
+* Tenant repository to manage CRUD opetrations on tenant properties (requires global admin permission)
 
 ![repository library in action](./assets/screenshot.gif)
 
